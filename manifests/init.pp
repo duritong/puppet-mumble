@@ -3,6 +3,11 @@ class mumble {
     ensure => installed,
   }
 
+  service { 'mumble-server':
+    ensure => 'running',
+    enable => true,
+  }
+
   file{'/etc/mumble-server.ini':
     source => [ "puppet:///modules/site-mumble/${fqdn}/mumble-server.ini",
                 "puppet:///modules/site-mumble/mumble-server.ini",
