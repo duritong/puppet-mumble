@@ -4,8 +4,10 @@ class mumble {
   }
 
   service { 'mumble-server':
-    ensure => 'running',
-    enable => true,
+    ensure    => 'running',
+    enable    => true,
+    hasstatus => false,
+    pattern   => '/usr/sbin/murmurd',
   }
 
   file{'/etc/mumble-server.ini':
