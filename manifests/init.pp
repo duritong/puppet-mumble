@@ -1,24 +1,37 @@
 # setup mumble
-class mumble {
-  package { 'mumble-server':
+#
+#  Parameters:
+#
+#    * config_content: get content for central config file from
+#      this parameter. Useful for using templates
+#    * config_source: Source path for your config
+#
+class mumble(
+  $config_content = false,
+  $config_source  = [ "puppet:///modules/site_mumble/${::fqdn}/mumble-server.ini",
+                      "puppet:///modules/site_mumble/mumble-server.ini",
+                      "puppet:///modules/mumble/mumble-server.ini" ],
+) {
+  package{'mumble-server':
     ensure => installed,
-  }
-
-  service { 'mumble-server':
+  } -> file{'/etc/mumble-server.ini':
+    owner   => root,
+    group   => mumble-server,
+    mode    => 0640;
+  } ~> service{'mumble-server':
     ensure    => 'running',
     enable    => true,
     hasstatus => false,
     pattern   => '/usr/sbin/murmurd',
   }
 
-  file{'/etc/mumble-server.ini':
-    source => [ "puppet:///modules/site_mumble/${::fqdn}/mumble-server.ini",
-                "puppet:///modules/site_mumble/mumble-server.ini",
-                "puppet:///modules/mumble/mumble-server.ini" ],
-    require => Package['mumble-server'],
-    notify  => Service['mumble-server'],
-    owner   => root,
-    group   => mumble-server,
-    mode    => 0640;
+  if $config_content {
+    File['/etc/mumble-server.ini']{
+      content => $config_content,
+    }
+  } else {
+    File['/etc/mumble-server.ini']{
+      source => $config_source,
+    }
   }
 }
