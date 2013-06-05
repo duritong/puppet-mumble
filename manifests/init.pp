@@ -9,15 +9,15 @@
 class mumble(
   $config_content = false,
   $config_source  = [ "puppet:///modules/site_mumble/${::fqdn}/mumble-server.ini",
-                      "puppet:///modules/site_mumble/mumble-server.ini",
-                      "puppet:///modules/mumble/mumble-server.ini" ],
+                      'puppet:///modules/site_mumble/mumble-server.ini',
+                      'puppet:///modules/mumble/mumble-server.ini' ],
 ) {
   package{'mumble-server':
     ensure => installed,
   } -> file{'/etc/mumble-server.ini':
     owner   => root,
     group   => mumble-server,
-    mode    => 0640;
+    mode    => '0640';
   } ~> service{'mumble-server':
     ensure    => 'running',
     enable    => true,
