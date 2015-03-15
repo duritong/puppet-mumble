@@ -13,6 +13,7 @@ class mumble(
                       'puppet:///modules/site_mumble/mumble-server.ini',
                       'puppet:///modules/mumble/mumble-server.ini' ],
   $manage_munin   = false,
+  $icesecret      = 'secureme',
 ) {
   package{'mumble-server':
     ensure => installed,
@@ -38,6 +39,6 @@ class mumble(
   }
 
   if $manage_munin {
-    include mumble::munin
+    include ::mumble::munin
   }
 }
