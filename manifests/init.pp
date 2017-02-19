@@ -15,17 +15,22 @@ class mumble(
   $manage_munin   = false,
   $icesecret      = 'secureme',
 ) {
-  package{'mumble-server':
+  if $osfamily == 'RedHat' {
+    $pkg_name = 'murmur'
+    $service_name = 'murmur'
+  } else {
+    $pkg_name = 'mumble-server'
+    $service_name = 'mumble-server'
+  }
+  package{$pkg_name:
     ensure => installed,
   } -> file{'/etc/mumble-server.ini':
     owner   => root,
     group   => mumble-server,
     mode    => '0640';
-  } ~> service{'mumble-server':
+  } ~> service{$service_name:
     ensure    => 'running',
     enable    => true,
-    hasstatus => false,
-    pattern   => '/usr/sbin/murmurd',
   }
 
   if $config_content {
